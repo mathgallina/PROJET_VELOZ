@@ -32,9 +32,10 @@ class GoalForm(FlaskForm):
     current_value = FloatField('Valor Atual', default=0)
     goal_type = SelectField('Tipo de Meta', 
                           choices=[
-                              ('sales_amount', 'Valor de Vendas'),
-                              ('sales_quantity', 'Quantidade de Vendas'),
+                              ('renewals', 'Renovações de Contrato'),
+                              ('upgrades', 'Upgrades de Clientes'),
                               ('new_customers', 'Novos Clientes'),
+                              ('revenue', 'Faturamento Total'),
                               ('customer_satisfaction', 'Satisfação do Cliente')
                           ],
                           validators=[DataRequired()])
@@ -209,4 +210,27 @@ def api_get_summary():
 def api_get_overdue():
     """API: Retorna metas atrasadas"""
     overdue_goals = goal_service.get_overdue_goals()
-    return jsonify([goal.to_dict() for goal in overdue_goals]) 
+    return jsonify([goal.to_dict() for goal in overdue_goals])
+
+@goals_bp.route('/report/pdf')
+@login_required
+def generate_pdf_report():
+    """Gera relatório em PDF das metas"""
+    try:
+        goals = goal_service.get_all_goals()
+        summary = goal_service.get_goals_summary()
+        
+        # Aqui você pode implementar a geração de PDF
+        # Por enquanto, retornamos um JSON com os dados
+        report_data = {
+            'summary': summary,
+            'goals': [goal.to_dict() for goal in goals],
+            'generated_at': datetime.now().isoformat(),
+            'generated_by': current_user.username
+        }
+        
+        return jsonify(report_data)
+        
+    except Exception as e:
+        flash(f'Erro ao gerar relatório: {str(e)}', 'error')
+        return redirect(url_for('goals.index')) 

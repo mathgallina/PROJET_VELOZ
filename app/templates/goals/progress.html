@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Atualizar Progresso - {{ goal.title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-0">Atualizar Progresso</h1>
+                    <p class="text-muted mb-0">{{ goal.title }}</p>
+                </div>
+                <a href="{{ url_for('goals.show', goal_id=goal.id) }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Atualizar Progresso da Meta</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Meta</label>
+                                    <input type="text" class="form-control" value="{{ goal.title }}" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Valor Alvo</label>
+                                    <input type="text" class="form-control" value="{{ goal.target_value }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Progresso Atual</label>
+                                    <div class="progress mb-2">
+                                        <div class="progress-bar bg-success" 
+                                             style="width: {{ goal.progress_percentage }}%">
+                                            {{ "%.1f"|format(goal.progress_percentage) }}%
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">
+                                        {{ goal.current_value }} / {{ goal.target_value }}
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Status Atual</label>
+                                    <div>
+                                        {% if goal.status.value == 'completed' %}
+                                            <span class="badge bg-success">Concluída</span>
+                                        {% elif goal.status.value == 'in_progress' %}
+                                            <span class="badge bg-warning">Em Andamento</span>
+                                        {% elif goal.status.value == 'pending' %}
+                                            <span class="badge bg-secondary">Pendente</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Cancelada</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.current_value.label(class="form-label") }}
+                            {{ form.current_value(class="form-control" + (" is-invalid" if form.current_value.errors else ""), 
+                                                placeholder="Digite o novo valor atual") }}
+                            {% if form.current_value.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.current_value.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                Digite o novo valor atual para atualizar o progresso da meta.
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('goals.show', goal_id=goal.id) }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-chart-line"></i> Atualizar Progresso
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Informações da Meta -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Informações da Meta</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>Descrição</h6>
+                        <p class="mb-0">{{ goal.description or 'Nenhuma descrição fornecida' }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Tipo de Meta</h6>
+                        <span class="badge bg-info">{{ goal.goal_type.value }}</span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Responsável</h6>
+                        <p class="mb-0">{{ goal.assigned_to }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Data de Início</h6>
+                        <p class="mb-0">{{ goal.start_date.strftime('%d/%m/%Y') if goal.start_date else 'Não definida' }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Data de Fim</h6>
+                        <p class="mb-0">{{ goal.end_date.strftime('%d/%m/%Y') if goal.end_date else 'Não definida' }}</p>
+                    </div>
+                    
+                    {% if goal.is_overdue %}
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Atenção:</strong> Esta meta está atrasada!
+                        </div>
+                    {% endif %}
+                    
+                    {% if goal.days_remaining > 0 %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-clock"></i>
+                            <strong>Dias restantes:</strong> {{ goal.days_remaining }} dias
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Histórico de Atualizações -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Histórico</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>Criado por</h6>
+                        <p class="mb-0">{{ goal.created_by }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Criado em</h6>
+                        <p class="mb-0">{{ goal.created_at.strftime('%d/%m/%Y às %H:%M') if goal.created_at else 'N/A' }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Última atualização</h6>
+                        <p class="mb-0">{{ goal.updated_at.strftime('%d/%m/%Y às %H:%M') if goal.updated_at else 'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

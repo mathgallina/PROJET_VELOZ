@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}Detalhes da Meta - {{ goal.title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-0">{{ goal.title }}</h1>
+                    <p class="text-muted mb-0">Detalhes da Meta</p>
+                </div>
+                <div class="btn-group">
+                    <a href="{{ url_for('goals.edit', goal_id=goal.id) }}" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Editar
+                    </a>
+                    <a href="{{ url_for('goals.update_progress', goal_id=goal.id) }}" class="btn btn-warning">
+                        <i class="fas fa-chart-line"></i> Atualizar Progresso
+                    </a>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <i class="fas fa-trash"></i> Excluir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informações da Meta -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Informações da Meta</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Descrição</h6>
+                            <p>{{ goal.description or 'Nenhuma descrição fornecida' }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Tipo de Meta</h6>
+                            <span class="badge bg-info">{{ goal.goal_type.value }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <h6>Responsável</h6>
+                            <p>{{ goal.assigned_to }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Criado por</h6>
+                            <p>{{ goal.created_by }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <h6>Data de Início</h6>
+                            <p>{{ goal.start_date.strftime('%d/%m/%Y') if goal.start_date else 'Não definida' }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Data de Fim</h6>
+                            <p>{{ goal.end_date.strftime('%d/%m/%Y') if goal.end_date else 'Não definida' }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <h6>Criado em</h6>
+                            <p>{{ goal.created_at.strftime('%d/%m/%Y às %H:%M') if goal.created_at else 'N/A' }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Última atualização</h6>
+                            <p>{{ goal.updated_at.strftime('%d/%m/%Y às %H:%M') if goal.updated_at else 'N/A' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Status e Progresso -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Status e Progresso</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>Status</h6>
+                        {% if goal.status.value == 'completed' %}
+                            <span class="badge bg-success">Concluída</span>
+                        {% elif goal.status.value == 'in_progress' %}
+                            <span class="badge bg-warning">Em Andamento</span>
+                        {% elif goal.status.value == 'pending' %}
+                            <span class="badge bg-secondary">Pendente</span>
+                        {% else %}
+                            <span class="badge bg-danger">Cancelada</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Progresso</h6>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" 
+                                 style="width: {{ goal.progress_percentage }}%">
+                                {{ "%.1f"|format(goal.progress_percentage) }}%
+                            </div>
+                        </div>
+                        <small class="text-muted">
+                            {{ goal.current_value }} / {{ goal.target_value }}
+                        </small>
+                    </div>
+                    
+                    {% if goal.is_overdue %}
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Atenção:</strong> Esta meta está atrasada!
+                        </div>
+                    {% endif %}
+                    
+                    {% if goal.days_remaining > 0 %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-clock"></i>
+                            <strong>Dias restantes:</strong> {{ goal.days_remaining }} dias
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Ações Rápidas -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Ações Rápidas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('goals.index') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Voltar à Lista
+                        </a>
+                        <a href="{{ url_for('goals.edit', goal_id=goal.id) }}" class="btn btn-primary">
+                            <i class="fas fa-edit"></i> Editar Meta
+                        </a>
+                        <a href="{{ url_for('goals.update_progress', goal_id=goal.id) }}" class="btn btn-warning">
+                            <i class="fas fa-chart-line"></i> Atualizar Progresso
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação de Exclusão -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir a meta <strong>"{{ goal.title }}"</strong>?</p>
+                <p class="text-danger">Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form action="{{ url_for('goals.delete', goal_id=goal.id) }}" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-danger">Excluir Meta</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Meta - {{ goal.title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-0">Editar Meta</h1>
+                    <p class="text-muted mb-0">{{ goal.title }}</p>
+                </div>
+                <a href="{{ url_for('goals.show', goal_id=goal.id) }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Informações da Meta</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    {{ form.title.label(class="form-label") }}
+                                    {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}
+                                    {% if form.title.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.title.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    {{ form.assigned_to.label(class="form-label") }}
+                                    {{ form.assigned_to(class="form-control" + (" is-invalid" if form.assigned_to.errors else "")) }}
+                                    {% if form.assigned_to.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.assigned_to.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), rows=3) }}
+                            {% if form.description.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.description.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    {{ form.target_value.label(class="form-label") }}
+                                    {{ form.target_value(class="form-control" + (" is-invalid" if form.target_value.errors else "")) }}
+                                    {% if form.target_value.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.target_value.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    {{ form.current_value.label(class="form-label") }}
+                                    {{ form.current_value(class="form-control" + (" is-invalid" if form.current_value.errors else "")) }}
+                                    {% if form.current_value.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.current_value.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    {{ form.goal_type.label(class="form-label") }}
+                                    {{ form.goal_type(class="form-select" + (" is-invalid" if form.goal_type.errors else "")) }}
+                                    {% if form.goal_type.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.goal_type.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    {{ form.status.label(class="form-label") }}
+                                    {{ form.status(class="form-select" + (" is-invalid" if form.status.errors else "")) }}
+                                    {% if form.status.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.status.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    {{ form.start_date.label(class="form-label") }}
+                                    {{ form.start_date(class="form-control" + (" is-invalid" if form.start_date.errors else ""), type="date") }}
+                                    {% if form.start_date.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.start_date.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    {{ form.end_date.label(class="form-label") }}
+                                    {{ form.end_date(class="form-control" + (" is-invalid" if form.end_date.errors else ""), type="date") }}
+                                    {% if form.end_date.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.end_date.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('goals.show', goal_id=goal.id) }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Salvar Alterações
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Informações Atuais -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Informações Atuais</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>Progresso Atual</h6>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" 
+                                 style="width: {{ goal.progress_percentage }}%">
+                                {{ "%.1f"|format(goal.progress_percentage) }}%
+                            </div>
+                        </div>
+                        <small class="text-muted">
+                            {{ goal.current_value }} / {{ goal.target_value }}
+                        </small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Status Atual</h6>
+                        {% if goal.status.value == 'completed' %}
+                            <span class="badge bg-success">Concluída</span>
+                        {% elif goal.status.value == 'in_progress' %}
+                            <span class="badge bg-warning">Em Andamento</span>
+                        {% elif goal.status.value == 'pending' %}
+                            <span class="badge bg-secondary">Pendente</span>
+                        {% else %}
+                            <span class="badge bg-danger">Cancelada</span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if goal.is_overdue %}
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Atenção:</strong> Esta meta está atrasada!
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <h6>Criado por</h6>
+                        <p class="mb-0">{{ goal.created_by }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Criado em</h6>
+                        <p class="mb-0">{{ goal.created_at.strftime('%d/%m/%Y às %H:%M') if goal.created_at else 'N/A' }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Última atualização</h6>
+                        <p class="mb-0">{{ goal.updated_at.strftime('%d/%m/%Y às %H:%M') if goal.updated_at else 'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

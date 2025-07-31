@@ -19,10 +19,11 @@ class GoalStatus(Enum):
 
 class GoalType(Enum):
     """Tipo de meta"""
-    SALES_AMOUNT = 'sales_amount'
-    SALES_QUANTITY = 'sales_quantity'
-    NEW_CUSTOMERS = 'new_customers'
-    CUSTOMER_SATISFACTION = 'customer_satisfaction'
+    RENEWALS = 'renewals'  # Renovações de contrato
+    UPGRADES = 'upgrades'  # Upgrades de clientes
+    NEW_CUSTOMERS = 'new_customers'  # Novos clientes
+    REVENUE = 'revenue'  # Faturamento total
+    CUSTOMER_SATISFACTION = 'customer_satisfaction'  # Satisfação do cliente
 
 class Goal:
     """Modelo de meta para vendas"""
@@ -50,6 +51,23 @@ class Goal:
         if self.target_value == 0:
             return 0
         return min(100, (self.current_value / self.target_value) * 100)
+    
+    @property
+    def commission_value(self):
+        """Calcula o valor da comissão baseado nas regras da Veloz Fibra"""
+        if self.goal_type == GoalType.RENEWALS:
+            # R$ 3 por renovação, mínimo 100 renovações
+            if self.current_value >= 100:
+                return self.current_value * 3.0
+            return 0
+        elif self.goal_type == GoalType.UPGRADES:
+            # Diferença adicional para upgrades
+            return self.current_value
+        elif self.goal_type == GoalType.REVENUE:
+            # Comissão baseada no faturamento
+            return self.current_value * 0.05  # 5% do faturamento
+        else:
+            return 0
     
     @property
     def is_overdue(self):
@@ -82,7 +100,8 @@ class Goal:
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
             'progress_percentage': self.progress_percentage,
             'is_overdue': self.is_overdue,
-            'days_remaining': self.days_remaining
+            'days_remaining': self.days_remaining,
+            'commission_value': self.commission_value
         }
     
     def __repr__(self):

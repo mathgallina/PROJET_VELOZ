@@ -107,13 +107,17 @@ class GoalService:
         if all_goals:
             avg_progress = sum(g.progress_percentage for g in all_goals) / len(all_goals)
         
+        # Calcula faturamento total baseado nas comissões
+        total_revenue = sum(g.commission_value for g in all_goals)
+        
         return {
             'total_goals': total_goals,
             'completed_goals': completed_goals,
             'in_progress_goals': in_progress_goals,
             'overdue_goals': overdue_goals,
             'avg_progress': round(avg_progress, 2),
-            'completion_rate': round((completed_goals / total_goals * 100) if total_goals > 0 else 0, 2)
+            'completion_rate': round((completed_goals / total_goals * 100) if total_goals > 0 else 0, 2),
+            'total_revenue': total_revenue
         }
     
     def get_goals_by_period(self, start_date: date, end_date: date) -> List[Goal]:
