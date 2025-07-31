@@ -1,275 +1,258 @@
-# Wiki Veloz Fibra
+# Wiki Veloz Fibra - Sistema de Gerenciamento Empresarial
 
-Sistema de gestão empresarial completo desenvolvido em Flask, com foco em organização, escalabilidade e facilidade de uso.
+## 📋 Resumo do Projeto
 
-## 🚀 Funcionalidades
+Sistema Flask modular para gerenciamento empresarial da Veloz Fibra com funcionalidades completas de autenticação, documentos, backup, analytics, recursos humanos e metas.
 
-### ✅ Implementadas
-
-#### 📊 Sistema de Metas
-- Cadastro e gestão de metas de vendas
-- Acompanhamento de progresso em tempo real
-- Diferentes tipos de metas (valor, quantidade, novos clientes, satisfação)
-- Relatórios e dashboards
-- Sistema de notificações para metas atrasadas
-
-#### 👥 Recursos Humanos
-- Gestão completa de funcionários
-- Controle de departamentos
-- Acompanhamento de salários e benefícios
-- Relatórios de RH
-- Sistema de permissões por departamento
-
-#### 📄 Gestão de Documentos
-- Upload e organização de documentos
-- Sistema de categorização
-- Busca avançada
-- Controle de versões
-
-#### 🔄 Sistema de Backup
-- Backup automático para Google Drive
-- Sincronização de arquivos
-- Restauração de dados
-- Criptografia de dados sensíveis
-
-#### 📈 Analytics
-- Dashboards interativos
-- Relatórios personalizados
-- Métricas de performance
-- Exportação de dados
-
-### 🔄 Em Desenvolvimento
-
-#### 🎓 Sistema de Treinamentos
-- Cadastro de treinamentos
-- Controle de participação
-- Certificados automáticos
-- Relatórios de capacitação
-
-#### 🔐 Sistema Avançado de Permissões
-- Controle granular por usuário
-- Permissões por setor
-- Auditoria de acessos
-- Integração com LDAP
-
-## 🛠️ Tecnologias
-
-- **Backend**: Flask 2.3.3
-- **Frontend**: Bootstrap 5, FontAwesome
-- **Banco de Dados**: SQLite (JSON para desenvolvimento)
-- **Autenticação**: Flask-Login
-- **Formulários**: WTForms
-- **Backup**: Google Drive API
-
-## 📦 Instalação
+## 🚀 Configuração Rápida
 
 ### Pré-requisitos
 - Python 3.9+
 - pip
-- Git
+- git
 
-### Passos
-
-1. **Clone o repositório**
+### Instalação Automática
 ```bash
-git clone <repository-url>
-cd projet_veloz
+# Clone o repositório (se aplicável)
+# git clone [URL_DO_REPOSITORIO]
+
+# Execute o script de configuração
+./setup_project.sh
+
+# Inicie o servidor
+./start_server.sh
 ```
 
-2. **Configure o ambiente virtual**
+### Instalação Manual
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate  # Linux/Mac
-# ou
-.venv\Scripts\activate  # Windows
-```
+# 1. Criar ambiente virtual
+python3 -m venv venv
+source venv/bin/activate
 
-3. **Instale as dependências**
-```bash
+# 2. Instalar dependências
 pip install -r requirements.txt
-```
 
-4. **Configure as variáveis de ambiente**
-```bash
+# 3. Configurar variáveis de ambiente
 cp env.example .env
-# Edite o arquivo .env com suas configurações
+
+# 4. Iniciar servidor
+python app.py
 ```
 
-5. **Execute o script de inicialização**
-```bash
-chmod +x scripts/start.sh
-./scripts/start.sh
-```
+## 🌐 Acesso ao Sistema
 
-## 🚀 Uso
-
-### Inicialização Rápida
-```bash
-./scripts/start.sh
-```
-
-### Acesso ao Sistema
 - **URL**: http://localhost:8001
-- **Usuário**: admin
-- **Senha**: admin
-
-### Módulos Principais
-
-#### Sistema de Metas (`/goals`)
-- Criar e gerenciar metas de vendas
-- Acompanhar progresso em tempo real
-- Visualizar relatórios de performance
-
-#### Recursos Humanos (`/hr`)
-- Cadastrar funcionários
-- Gerenciar departamentos
-- Visualizar estatísticas de RH
-
-#### Documentos (`/documents`)
-- Upload e organização de arquivos
-- Sistema de busca avançada
-- Controle de versões
-
-#### Backup (`/backup`)
-- Configurar backup automático
-- Sincronizar com Google Drive
-- Restaurar dados
+- **Login padrão**: admin / admin123
+- **Porta**: 8001 (configurável via variável PORT)
 
 ## 📁 Estrutura do Projeto
 
 ```
 projet_veloz/
 ├── app/
-│   ├── core/           # Configurações e utilitários
-│   ├── modules/        # Módulos da aplicação
-│   │   ├── goals/      # Sistema de Metas
-│   │   ├── hr/         # Recursos Humanos
-│   │   ├── documents/  # Gestão de Documentos
-│   │   ├── backup/     # Sistema de Backup
-│   │   └── analytics/  # Analytics
-│   ├── shared/         # Componentes compartilhados
-│   ├── static/         # Arquivos estáticos
-│   └── templates/      # Templates HTML
-├── scripts/            # Scripts utilitários
-├── backups/            # Arquivos de backup
-├── requirements.txt    # Dependências Python
-└── app.py             # Ponto de entrada
+│   ├── core/                    # Configurações centrais
+│   │   ├── config.py           # Configurações da aplicação
+│   │   └── database.py         # Configuração de banco de dados
+│   ├── data/                   # Arquivos JSON de dados
+│   │   ├── users.json          # Usuários do sistema
+│   │   ├── employees.json      # Funcionários
+│   │   ├── goals.json          # Metas
+│   │   └── activity_log.json   # Log de atividades
+│   ├── modules/                # Módulos da aplicação
+│   │   ├── auth/              # Autenticação e login
+│   │   ├── main/              # Dashboard principal
+│   │   ├── pages/             # Gerenciamento de páginas
+│   │   ├── documents/         # Sistema de documentos
+│   │   ├── backup/            # Sistema de backup
+│   │   ├── analytics/         # Analytics e relatórios
+│   │   ├── notifications/     # Sistema de notificações
+│   │   ├── pdfs/             # Gerenciamento de PDFs
+│   │   ├── users/            # Gerenciamento de usuários
+│   │   ├── goals/            # Sistema de metas
+│   │   ├── hr/               # Recursos humanos
+│   │   └── activity/         # Log de atividades
+│   ├── shared/                # Utilitários compartilhados
+│   │   ├── decorators.py     # Decoradores customizados
+│   │   ├── exceptions.py     # Exceções customizadas
+│   │   └── utils.py          # Utilitários gerais
+│   ├── static/                # Arquivos estáticos
+│   │   └── uploads/          # Uploads de arquivos
+│   └── templates/             # Templates Jinja2
+│       ├── base.html         # Template base
+│       ├── auth/             # Templates de autenticação
+│       ├── main/             # Templates principais
+│       ├── goals/            # Templates de metas
+│       └── hr/               # Templates de RH
+├── backups/                   # Backups do sistema
+├── scripts/                   # Scripts utilitários
+├── venv/                      # Ambiente virtual
+├── app.py                     # Arquivo principal
+├── requirements.txt           # Dependências Python
+├── setup_project.sh          # Script de configuração
+├── start_server.sh           # Script de inicialização
+├── env.example               # Exemplo de variáveis de ambiente
+└── .env                      # Variáveis de ambiente
 ```
 
-## 🔧 Configuração
+## 🔧 Configurações
 
-### Variáveis de Ambiente
-
-Crie um arquivo `.env` baseado no `env.example`:
-
-```env
-# Flask Configuration
-SECRET_KEY=your-secret-key-here
+### Variáveis de Ambiente (.env)
+```bash
+FLASK_APP=app.py
+FLASK_ENV=development
 FLASK_DEBUG=True
 FLASK_HOST=0.0.0.0
 PORT=8001
-
-# Google Drive API (para backup)
-GOOGLE_DRIVE_FOLDER_ID=your-folder-id
-GOOGLE_APPLICATION_CREDENTIALS=path/to/credentials.json
-
-# Database (futuro)
-DATABASE_URL=sqlite:///app.db
+SECRET_KEY=dev-secret-key-change-in-production
 ```
 
-### Google Drive API (Backup)
+## 🎯 Funcionalidades Principais
 
-1. Acesse [Google Cloud Console](https://console.cloud.google.com/)
-2. Crie um projeto
-3. Ative a Google Drive API
-4. Crie credenciais de serviço
-5. Baixe o arquivo JSON
-6. Configure no `.env`
+### 🔐 Autenticação e Usuários
+- Sistema de login seguro
+- Gerenciamento de usuários
+- Controle de acesso por roles
+- Sessões persistentes
 
-## 📊 Funcionalidades por Módulo
+### 📄 Gerenciamento de Documentos
+- Upload e download de arquivos
+- Categorização de documentos
+- Sistema de anexos
+- Busca e filtros
+- Versionamento
 
-### Sistema de Metas
-- ✅ CRUD completo de metas
-- ✅ Acompanhamento de progresso
-- ✅ Relatórios e dashboards
-- ✅ Notificações automáticas
-- ✅ API REST
+### 💾 Sistema de Backup
+- Backup automático para Google Drive
+- Criptografia de dados
+- Agendamento de backups
+- Restauração de dados
 
-### Recursos Humanos
-- ✅ Gestão de funcionários
-- ✅ Controle de departamentos
-- ✅ Estatísticas de RH
-- ✅ Relatórios salariais
-- ✅ API REST
+### 📊 Analytics e Relatórios
+- Dashboard interativo
+- Métricas de uso
+- Relatórios personalizados
+- Exportação de dados
 
-### Documentos
-- ✅ Upload de arquivos
-- ✅ Organização por categorias
-- ✅ Busca avançada
-- ✅ Controle de versões
+### 👥 Recursos Humanos
+- Cadastro de funcionários
+- Gerenciamento de departamentos
+- Relatórios de RH
+- Controle de acesso
 
-### Backup
-- ✅ Backup automático
-- ✅ Sincronização Google Drive
-- ✅ Criptografia de dados
-- ✅ Restauração
+### 🎯 Sistema de Metas
+- Definição de metas
+- Acompanhamento de progresso
+- Notificações de prazo
+- Relatórios de performance
 
-## 🧪 Testes
+### 🔔 Notificações
+- Sistema de notificações em tempo real
+- Configuração de alertas
+- Histórico de notificações
 
+### 📱 Interface Responsiva
+- Design moderno com Bootstrap 5
+- Interface adaptável
+- Experiência de usuário otimizada
+
+## 🛠️ Desenvolvimento
+
+### Adicionar Nova Funcionalidade
+1. Crie um novo módulo em `app/modules/`
+2. Siga o padrão: models, repositories, services, routes
+3. Registre o blueprint em `app/__init__.py`
+
+### Estrutura de Módulo
+```
+module_name/
+├── __init__.py
+├── models/
+│   └── model.py
+├── repositories/
+│   └── repository.py
+├── services/
+│   └── service.py
+├── routes.py
+└── validators.py (opcional)
+```
+
+### Templates
+- Use `{% extends "base.html" %}` para herdar o template base
+- Mantenha a estrutura responsiva com Bootstrap 5
+- Siga o padrão de nomenclatura
+
+## 🔒 Segurança
+
+- Autenticação segura com bcrypt
+- Proteção CSRF
+- Validação de entrada
+- Sanitização de dados
+- Controle de acesso por roles
+
+## 📝 Logs e Monitoramento
+
+- Log de atividades completo
+- Rastreamento de ações do usuário
+- Monitoramento de performance
+- Alertas de segurança
+
+## 🚨 Troubleshooting
+
+### Erro de Porta
+Se a porta 8001 estiver ocupada, altere a variável PORT no .env
+
+### Erro de Dependências
 ```bash
-# Executar testes básicos
-python -m pytest tests/
-
-# Verificar cobertura
-python -m pytest --cov=app tests/
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
-## 📈 Roadmap
+### Erro de Permissões
+```bash
+chmod +x start_server.sh
+chmod +x app.py
+```
 
-### Versão 1.1 (Próxima)
-- [ ] Sistema de Treinamentos
-- [ ] Sistema Avançado de Permissões
-- [ ] Integração com banco PostgreSQL
-- [ ] API completa para todos os módulos
+### Problemas de Importação
+```bash
+# Limpar cache Python
+find . -name "*.pyc" -delete
+find . -name "__pycache__" -type d -exec rm -rf {} +
+```
 
-### Versão 1.2
-- [ ] Sistema de Notificações em tempo real
-- [ ] Dashboard executivo
-- [ ] Relatórios avançados
-- [ ] Integração com sistemas externos
+## 📚 Documentação Adicional
 
-### Versão 2.0
-- [ ] Interface mobile responsiva
-- [ ] PWA (Progressive Web App)
-- [ ] Microserviços
-- [ ] Machine Learning para analytics
+- `INSTRUCOES.md` - Instruções detalhadas de uso
+- `QUICKSTART.md` - Guia de início rápido
+- `env.example` - Exemplo de configuração
 
 ## 🤝 Contribuição
 
 1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
+2. Crie uma branch para sua feature
+3. Commit suas mudanças
+4. Push para a branch
 5. Abra um Pull Request
 
-## 📝 Licença
+## 📄 Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
+Este projeto está sob a licença MIT. Veja o arquivo LICENSE para detalhes.
 
 ## 👨‍💻 Autor
 
 **Matheus Gallina**
+- Desenvolvedor Full Stack
+- Especialista em Python/Flask
+- Criador do Wiki Veloz Fibra
+
+## 📞 Suporte
+
+Para suporte técnico ou dúvidas:
 - Email: [seu-email@exemplo.com]
-- LinkedIn: [seu-linkedin]
-- GitHub: [seu-github]
-
-## 🙏 Agradecimentos
-
-- Comunidade Flask
-- Bootstrap Team
-- FontAwesome
-- Google Drive API
+- Documentação: [link-para-docs]
 
 ---
 
-**Wiki Veloz Fibra** - Transformando a gestão empresarial com tecnologia moderna e intuitiva. 
+**Versão**: 1.0.0  
+**Última atualização**: Dezembro 2024  
+**Status**: ✅ Produção 
