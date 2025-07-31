@@ -1,177 +1,81 @@
 """
-Main routes for Wiki Veloz
-CDD v2.0 - Main application routes
+Wiki Veloz Fibra - Main Routes
+Rotas principais do sistema
+
+@author: Matheus Gallina
+@version: 1.0.0
+@license: MIT
 """
 
-import json
+from flask import Blueprint, render_template
+from flask_login import login_required
 
-from flask import Blueprint, jsonify, render_template, request
-from flask_login import current_user, login_required
+# Create blueprint
+main_bp = Blueprint('main', __name__)
 
-main_bp = Blueprint("main", __name__)
-
-
-@main_bp.route("/")
+@main_bp.route('/')
 @login_required
 def index():
-    """Main dashboard page"""
-    return render_template("index.html")
+    """Dashboard principal"""
+    # Simulate dashboard data
+    stats = {
+        'pages': 15,
+        'documents': 42,
+        'users': 8,
+        'backups': 12
+    }
+    
+    recent_pages = [
+        {
+            'id': 1,
+            'title': 'Configuração de Rede',
+            'category': 'Técnico',
+            'updated_at': '2024-01-15 14:30'
+        },
+        {
+            'id': 2,
+            'title': 'Procedimentos de Backup',
+            'category': 'Administrativo',
+            'updated_at': '2024-01-14 09:15'
+        },
+        {
+            'id': 3,
+            'title': 'Manual do Usuário',
+            'category': 'Documentação',
+            'updated_at': '2024-01-13 16:45'
+        }
+    ]
+    
+    recent_activity = [
+        {
+            'title': 'Página criada',
+            'description': 'Nova página "Configuração de Rede" foi criada',
+            'created_at': '2024-01-15 14:30'
+        },
+        {
+            'title': 'Documento enviado',
+            'description': 'Manual técnico foi enviado para backup',
+            'created_at': '2024-01-15 13:20'
+        },
+        {
+            'title': 'Usuário logado',
+            'description': 'Administrador fez login no sistema',
+            'created_at': '2024-01-15 12:00'
+        }
+    ]
+    
+    return render_template('main/index.html', 
+                         stats=stats,
+                         recent_pages=recent_pages,
+                         recent_activity=recent_activity)
 
+@main_bp.route('/about')
+def about():
+    """Sobre o sistema"""
+    return render_template('main/about.html')
 
-@main_bp.route("/pages")
+@main_bp.route('/help')
 @login_required
-def pages():
-    """Pages management page"""
-    return render_template("pages/index.html")
-
-
-@main_bp.route("/documents")
-@login_required
-def documents():
-    """Documents dashboard page"""
-    return render_template("documents/index.html")
-
-
-@main_bp.route("/api/categories")
-@login_required
-def get_categories():
-    """Get all categories from pages"""
-    try:
-        from app.core.config import config
-        from app.core.database import DatabaseManager
-        from app.modules.pages.services.page_service import PageService
-
-        # Initialize services
-        db_manager = DatabaseManager(config['default'])
-        page_service = PageService(db_manager)
-        
-        # Get all pages
-        pages = page_service.get_all_pages()
-        
-        # Extract unique categories
-        categories = list({
-            page.get("category", "geral") for page in pages
-        })
-        
-        return jsonify(categories)
-        
-    except Exception as e:
-        return jsonify({
-            "error": str(e)
-        }), 500
-
-
-@main_bp.route("/api/search")
-@login_required
-def global_search():
-    """Global search endpoint - search pages and documents"""
-    try:
-        query = request.args.get("q", "").strip()
-        
-        if not query:
-            return jsonify({
-                "pages": [],
-                "files": [],
-                "total_results": 0
-            })
-        
-        # Import services
-        from app.core.config import config
-        from app.core.database import DatabaseManager
-        from app.modules.documents.services.document_service import DocumentService
-        from app.modules.pages.services.page_service import PageService
-
-        # Initialize services
-        db_manager = DatabaseManager(config['default'])
-        page_service = PageService(db_manager)
-        document_service = DocumentService(db_manager)
-        
-        # Search pages
-        page_results = page_service.search_pages(query)
-        
-        # Search documents
-        document_results = document_service.search_documents(query)
-        
-        # Load PDFs for file search
-        try:
-            with open("app/data/pdfs.json", "r", encoding="utf-8") as f:
-                pdfs = json.load(f)
-        except FileNotFoundError:
-            pdfs = []
-        
-        # Search in PDFs
-        file_results = []
-        query_lower = query.lower()
-        for pdf in pdfs:
-            if (query_lower in pdf.get("original_filename", "").lower() or
-                query_lower in pdf.get("description", "").lower() or
-                query_lower in pdf.get("sector_name", "").lower() or
-                query_lower in pdf.get("trainer", "").lower()):
-                file_results.append({**pdf, "type": "file"})
-        
-        total_results = len(page_results) + len(document_results) + len(
-            file_results
-        )
-        
-        # Log search activity
-        try:
-            from app.modules.activity.services.activity_service import ActivityService
-            activity_service = ActivityService()
-            activity_service.log_activity(
-                current_user.id,
-                "search",
-                f"Pesquisou por: {query} ({total_results} resultados)"
-            )
-        except Exception as e:
-            print(f"Error logging search activity: {e}")
-        
-        return jsonify({
-            "pages": page_results,
-            "documents": document_results,
-            "files": file_results,
-            "total_results": total_results,
-            "query": query
-        })
-        
-    except Exception as e:
-        return jsonify({
-            "error": str(e),
-            "pages": [],
-            "files": [],
-            "total_results": 0
-        }), 500
-
-
-@main_bp.route("/admin/analytics")
-@login_required
-def admin_analytics():
-    """Admin analytics page"""
-    return render_template("admin_analytics.html")
-
-
-@main_bp.route("/admin/notifications")
-@login_required
-def admin_notifications():
-    """Admin notifications page"""
-    return render_template("admin_notifications.html")
-
-
-@main_bp.route("/admin/pdfs")
-@login_required
-def admin_pdfs():
-    """Admin PDFs page"""
-    return render_template("admin_pdfs.html")
-
-
-@main_bp.route("/admin/backup")
-@login_required
-def admin_backup():
-    """Admin backup page"""
-    return render_template("admin_backup.html")
-
-
-@main_bp.route("/planos")
-@login_required
-def planos():
-    """Planos Ultra Velocidade page"""
-    return render_template("planos_veloz.html")
+def help():
+    """Página de ajuda"""
+    return render_template('main/help.html')

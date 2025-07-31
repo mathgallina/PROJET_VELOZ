@@ -1,14 +1,31 @@
+# Wiki Veloz Fibra - Dependencies
+# Versão: 1.0.0
+# Autor: Matheus Gallina
+
+# Core Flask Dependencies
 Flask==2.3.3
 Flask-CORS==4.0.0
-markdown==3.5.1
-python-slugify==8.0.1
-Werkzeug==2.3.7
-gunicorn==21.2.0
 Flask-Login==0.6.3
 Flask-WTF==1.1.1
+Werkzeug==2.3.7
+
+# Form and Validation
 WTForms==3.0.1
+email-validator==2.1.0
+
+# Security and Authentication
 bcrypt==4.0.1
+
+# Environment and Configuration
 python-dotenv==1.0.0
+
+# Content Processing
+markdown==3.5.1
+python-slugify==8.0.1
+
+# Production Server
+gunicorn==21.2.0
+
 # Backup System Dependencies
 google-auth==2.23.4
 google-auth-oauthlib==1.1.0

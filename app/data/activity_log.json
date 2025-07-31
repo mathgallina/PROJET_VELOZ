@@ -1,0 +1,37 @@
+[
+  {
+    "id": "activity-20250731142208",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-31T14:22:08.198206"
+  },
+  {
+    "id": "activity-20250731142257",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-31T14:22:57.932387"
+  },
+  {
+    "id": "activity-20250731142313",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-31T14:23:13.156425"
+  },
+  {
+    "id": "activity-20250731142323",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-31T14:23:23.455769"
+  },
+  {
+    "id": "activity-20250731142344",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-31T14:23:44.875975"
+  }
+]
