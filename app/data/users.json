@@ -7,9 +7,9 @@
     "password_hash": "pbkdf2:sha256:600000$kVTml0jFnKGnRP9r$68d165e1e5b581a02c601f3a80c430a6fc8116c4d173caf8b93eb2ff9592d492",
     "role": "admin",
     "created_at": "2025-07-23T10:36:39.763526",
-    "last_login": null,
+    "last_login": "2025-07-31T16:55:48.679710",
     "is_active": true,
-    "updated_at": "2025-07-25T14:49:32.418016"
+    "updated_at": "2025-07-31T16:55:48.679718"
   },
   {
     "id": "admin-001",

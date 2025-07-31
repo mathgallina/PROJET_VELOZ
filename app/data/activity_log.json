@@ -1391,5 +1391,19 @@
     "action": "document_created",
     "details": "Documento criado: Comercial",
     "timestamp": "2025-07-25T15:53:47.763209"
+  },
+  {
+    "id": "activity-20250731165528",
+    "user_id": "admin-001",
+    "action": "logout",
+    "details": "Logout realizado por Matheus Gallina",
+    "timestamp": "2025-07-31T16:55:28.481699"
+  },
+  {
+    "id": "activity-20250731165548",
+    "user_id": "bruna-001",
+    "action": "login",
+    "details": "Login realizado por Bruna Silva",
+    "timestamp": "2025-07-31T16:55:48.680795"
   }
 ]

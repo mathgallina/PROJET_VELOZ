@@ -32,6 +32,83 @@ def documents():
     return render_template("documents/index.html")
 
 
+@main_bp.route("/goals")
+@login_required
+def goals():
+    """Goals dashboard page"""
+    try:
+        from app.modules.goals.services.goal_service import GoalService
+        goal_service = GoalService()
+        
+        goals = goal_service.get_all_goals()
+        summary = goal_service.get_goals_summary()
+        
+        return render_template("goals/index.html", 
+                             goals=goals, 
+                             summary=summary)
+    except Exception as e:
+        return render_template("goals/index.html", 
+                             goals=[], 
+                             summary={
+                                 'total_goals': 0,
+                                 'completed_goals': 0,
+                                 'in_progress_goals': 0,
+                                 'overdue_goals': 0,
+                                 'avg_progress': 0,
+                                 'completion_rate': 0,
+                                 'total_revenue': 0
+                             })
+
+
+@main_bp.route("/goals/progress")
+@login_required
+def goals_progress():
+    """Goals progress dashboard page"""
+    try:
+        from app.modules.goals.services.goal_service import GoalService
+        goal_service = GoalService()
+        
+        goals = goal_service.get_all_goals()
+        summary = goal_service.get_goals_summary()
+        
+        # Agrupa metas por colaborador
+        goals_by_user = {}
+        for goal in goals:
+            if goal.assigned_to not in goals_by_user:
+                goals_by_user[goal.assigned_to] = []
+            goals_by_user[goal.assigned_to].append(goal)
+        
+        # Calcula progresso por colaborador
+        user_progress = {}
+        for user, user_goals in goals_by_user.items():
+            if user_goals:
+                avg_progress = sum(g.progress_percentage for g in user_goals) / len(user_goals)
+                user_progress[user] = {
+                    'goals': user_goals,
+                    'avg_progress': round(avg_progress, 1),
+                    'total_goals': len(user_goals),
+                    'completed_goals': len([g for g in user_goals if g.status.value == 'completed'])
+                }
+        
+        return render_template("goals/progress.html", 
+                             goals=goals, 
+                             summary=summary,
+                             user_progress=user_progress)
+    except Exception as e:
+        return render_template("goals/progress.html", 
+                             goals=[], 
+                             summary={
+                                 'total_goals': 0,
+                                 'completed_goals': 0,
+                                 'in_progress_goals': 0,
+                                 'overdue_goals': 0,
+                                 'avg_progress': 0,
+                                 'completion_rate': 0,
+                                 'total_revenue': 0
+                             },
+                             user_progress={})
+
+
 @main_bp.route("/api/categories")
 @login_required
 def get_categories():
