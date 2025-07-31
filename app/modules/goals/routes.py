@@ -217,20 +217,24 @@ def api_get_overdue():
 def generate_pdf_report():
     """Gera relatório em PDF das metas"""
     try:
+        from app.modules.goals.services.pdf_service import PDFService
+        from flask import send_file
+        
         goals = goal_service.get_all_goals()
         summary = goal_service.get_goals_summary()
         
-        # Aqui você pode implementar a geração de PDF
-        # Por enquanto, retornamos um JSON com os dados
-        report_data = {
-            'summary': summary,
-            'goals': [goal.to_dict() for goal in goals],
-            'generated_at': datetime.now().isoformat(),
-            'generated_by': current_user.username
-        }
+        # Gera o PDF
+        pdf_service = PDFService()
+        pdf_file = pdf_service.generate_goals_report(goals, summary, current_user.username)
         
-        return jsonify(report_data)
+        # Envia o arquivo para download
+        return send_file(
+            pdf_file,
+            as_attachment=True,
+            download_name=f'relatorio_metas_veloz_fibra_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pdf',
+            mimetype='application/pdf'
+        )
         
     except Exception as e:
-        flash(f'Erro ao gerar relatório: {str(e)}', 'error')
+        flash(f'Erro ao gerar relatório PDF: {str(e)}', 'error')
         return redirect(url_for('goals.index')) 

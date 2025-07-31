@@ -2,149 +2,329 @@
 
 {% block title %}Detalhes da Meta - {{ goal.title }}{% endblock %}
 
+{% block extra_head %}
+<style>
+    .detail-card {
+        border: none;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    .detail-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    .progress-circle {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: white;
+        margin: 0 auto 1rem;
+    }
+    .status-badge {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+    }
+    .info-section {
+        background: #f8f9fa;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .info-section h6 {
+        color: var(--bs-primary);
+        font-weight: 600;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid var(--bs-primary);
+        padding-bottom: 0.5rem;
+    }
+    .commission-highlight {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        text-align: center;
+    }
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .btn-action {
+        min-width: 120px;
+        border-radius: 2rem;
+    }
+    .alert-custom {
+        border-radius: 0.5rem;
+        border: none;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .timeline-item {
+        border-left: 3px solid var(--bs-primary);
+        padding-left: 1rem;
+        margin-bottom: 1rem;
+        position: relative;
+    }
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -0.5rem;
+        top: 0.5rem;
+        width: 0.5rem;
+        height: 0.5rem;
+        background: var(--bs-primary);
+        border-radius: 50%;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid">
-    <div class="row">
+    <!-- Header -->
+    <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="h3 mb-0">{{ goal.title }}</h1>
-                    <p class="text-muted mb-0">Detalhes da Meta</p>
+                    <h1 class="h2 mb-1">
+                        <i class="fas fa-bullseye text-primary me-2"></i>
+                        {{ goal.title }}
+                    </h1>
+                    <p class="text-muted mb-0">Detalhes da Meta - Veloz Fibra</p>
                 </div>
-                <div class="btn-group">
-                    <a href="{{ url_for('goals.edit', goal_id=goal.id) }}" class="btn btn-primary">
-                        <i class="fas fa-edit"></i> Editar
+                <div class="action-buttons">
+                    <a href="{{ url_for('goals.edit', goal_id=goal.id) }}" class="btn btn-primary btn-action">
+                        <i class="fas fa-edit me-2"></i>Editar
                     </a>
-                    <a href="{{ url_for('goals.update_progress', goal_id=goal.id) }}" class="btn btn-warning">
-                        <i class="fas fa-chart-line"></i> Atualizar Progresso
+                    <a href="{{ url_for('goals.update_progress', goal_id=goal.id) }}" class="btn btn-warning btn-action">
+                        <i class="fas fa-chart-line me-2"></i>Progresso
                     </a>
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                        <i class="fas fa-trash"></i> Excluir
+                    <button type="button" class="btn btn-danger btn-action" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <i class="fas fa-trash me-2"></i>Excluir
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Informações da Meta -->
     <div class="row">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Informações da Meta</h5>
+        <!-- Informações Principais -->
+        <div class="col-lg-8">
+            <!-- Status e Progresso -->
+            <div class="card detail-card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-chart-pie text-primary me-2"></i>
+                        Status e Progresso
+                    </h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6">
-                            <h6>Descrição</h6>
-                            <p>{{ goal.description or 'Nenhuma descrição fornecida' }}</p>
+                        <div class="col-md-4 text-center">
+                            <div class="progress-circle 
+                                {% if goal.progress_percentage >= 100 %}bg-success
+                                {% elif goal.progress_percentage >= 70 %}bg-info
+                                {% elif goal.progress_percentage >= 40 %}bg-warning
+                                {% else %}bg-danger{% endif %}">
+                                {{ "%.1f"|format(goal.progress_percentage) }}%
+                            </div>
+                            <h6 class="text-muted">Progresso</h6>
                         </div>
-                        <div class="col-md-6">
-                            <h6>Tipo de Meta</h6>
-                            <span class="badge bg-info">{{ goal.goal_type.value }}</span>
+                        <div class="col-md-4 text-center">
+                            <div class="commission-highlight">
+                                <h3 class="mb-1">R$ {{ "%.2f"|format(goal.commission_value) }}</h3>
+                                <small>Comissão Atual</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="mb-3">
+                                {% if goal.status.value == 'completed' %}
+                                    <span class="badge bg-success status-badge">Concluída</span>
+                                {% elif goal.status.value == 'in_progress' %}
+                                    <span class="badge bg-warning status-badge">Em Andamento</span>
+                                {% elif goal.status.value == 'pending' %}
+                                    <span class="badge bg-secondary status-badge">Pendente</span>
+                                {% else %}
+                                    <span class="badge bg-danger status-badge">Cancelada</span>
+                                {% endif %}
+                            </div>
+                            <h6 class="text-muted">Status</h6>
                         </div>
                     </div>
                     
-                    <div class="row mt-3">
+                    <!-- Barra de Progresso -->
+                    <div class="mt-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Progresso Detalhado</span>
+                            <span class="text-muted">{{ goal.current_value }} / {{ goal.target_value }}</span>
+                        </div>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar 
+                                {% if goal.progress_percentage >= 100 %}bg-success
+                                {% elif goal.progress_percentage >= 70 %}bg-info
+                                {% elif goal.progress_percentage >= 40 %}bg-warning
+                                {% else %}bg-danger{% endif %}" 
+                                style="width: {{ goal.progress_percentage }}%">
+                                <strong>{{ "%.1f"|format(goal.progress_percentage) }}%</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informações da Meta -->
+            <div class="card detail-card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-info-circle text-primary me-2"></i>
+                        Informações da Meta
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="info-section">
+                        <h6>
+                            <i class="fas fa-file-alt me-2"></i>
+                            Descrição
+                        </h6>
+                        <p class="mb-0">{{ goal.description or 'Nenhuma descrição fornecida' }}</p>
+                    </div>
+                    
+                    <div class="row">
                         <div class="col-md-6">
-                            <h6>Responsável</h6>
-                            <p>{{ goal.assigned_to }}</p>
+                            <div class="info-section">
+                                <h6>
+                                    <i class="fas fa-tag me-2"></i>
+                                    Tipo de Meta
+                                </h6>
+                                <span class="badge bg-info status-badge">{{ goal.goal_type.value|title }}</span>
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <h6>Criado por</h6>
-                            <p>{{ goal.created_by }}</p>
+                            <div class="info-section">
+                                <h6>
+                                    <i class="fas fa-user me-2"></i>
+                                    Responsável
+                                </h6>
+                                <p class="mb-0">{{ goal.assigned_to }}</p>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="row mt-3">
+                    <div class="row">
                         <div class="col-md-6">
-                            <h6>Data de Início</h6>
-                            <p>{{ goal.start_date.strftime('%d/%m/%Y') if goal.start_date else 'Não definida' }}</p>
+                            <div class="info-section">
+                                <h6>
+                                    <i class="fas fa-calendar-plus me-2"></i>
+                                    Data de Início
+                                </h6>
+                                <p class="mb-0">{{ goal.start_date.strftime('%d/%m/%Y') if goal.start_date else 'Não definida' }}</p>
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <h6>Data de Fim</h6>
-                            <p>{{ goal.end_date.strftime('%d/%m/%Y') if goal.end_date else 'Não definida' }}</p>
-                        </div>
-                    </div>
-                    
-                    <div class="row mt-3">
-                        <div class="col-md-6">
-                            <h6>Criado em</h6>
-                            <p>{{ goal.created_at.strftime('%d/%m/%Y às %H:%M') if goal.created_at else 'N/A' }}</p>
-                        </div>
-                        <div class="col-md-6">
-                            <h6>Última atualização</h6>
-                            <p>{{ goal.updated_at.strftime('%d/%m/%Y às %H:%M') if goal.updated_at else 'N/A' }}</p>
+                            <div class="info-section">
+                                <h6>
+                                    <i class="fas fa-calendar-check me-2"></i>
+                                    Data de Fim
+                                </h6>
+                                <p class="mb-0">{{ goal.end_date.strftime('%d/%m/%Y') if goal.end_date else 'Não definida' }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="col-md-4">
-            <!-- Status e Progresso -->
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Status e Progresso</h5>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Alertas e Status -->
+            <div class="card detail-card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-exclamation-triangle text-primary me-2"></i>
+                        Alertas e Status
+                    </h5>
                 </div>
                 <div class="card-body">
-                    <div class="mb-3">
-                        <h6>Status</h6>
-                        {% if goal.status.value == 'completed' %}
-                            <span class="badge bg-success">Concluída</span>
-                        {% elif goal.status.value == 'in_progress' %}
-                            <span class="badge bg-warning">Em Andamento</span>
-                        {% elif goal.status.value == 'pending' %}
-                            <span class="badge bg-secondary">Pendente</span>
-                        {% else %}
-                            <span class="badge bg-danger">Cancelada</span>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="mb-3">
-                        <h6>Progresso</h6>
-                        <div class="progress">
-                            <div class="progress-bar bg-success" 
-                                 style="width: {{ goal.progress_percentage }}%">
-                                {{ "%.1f"|format(goal.progress_percentage) }}%
-                            </div>
-                        </div>
-                        <small class="text-muted">
-                            {{ goal.current_value }} / {{ goal.target_value }}
-                        </small>
-                    </div>
-                    
                     {% if goal.is_overdue %}
-                        <div class="alert alert-danger">
-                            <i class="fas fa-exclamation-triangle"></i>
+                        <div class="alert alert-danger alert-custom">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
                             <strong>Atenção:</strong> Esta meta está atrasada!
                         </div>
                     {% endif %}
                     
                     {% if goal.days_remaining > 0 %}
-                        <div class="alert alert-info">
-                            <i class="fas fa-clock"></i>
+                        <div class="alert alert-info alert-custom">
+                            <i class="fas fa-clock me-2"></i>
                             <strong>Dias restantes:</strong> {{ goal.days_remaining }} dias
+                        </div>
+                    {% endif %}
+                    
+                    {% if goal.progress_percentage < 30 %}
+                        <div class="alert alert-warning alert-custom">
+                            <i class="fas fa-chart-line me-2"></i>
+                            <strong>Progresso baixo:</strong> Considere revisar a meta
+                        </div>
+                    {% endif %}
+                    
+                    {% if goal.progress_percentage >= 100 %}
+                        <div class="alert alert-success alert-custom">
+                            <i class="fas fa-trophy me-2"></i>
+                            <strong>Parabéns!</strong> Meta concluída com sucesso
                         </div>
                     {% endif %}
                 </div>
             </div>
-            
+
+            <!-- Histórico -->
+            <div class="card detail-card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-history text-primary me-2"></i>
+                        Histórico
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="timeline-item">
+                        <h6 class="mb-1">Criado por</h6>
+                        <p class="mb-0 text-muted">{{ goal.created_by }}</p>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <h6 class="mb-1">Criado em</h6>
+                        <p class="mb-0 text-muted">{{ goal.created_at.strftime('%d/%m/%Y às %H:%M') if goal.created_at else 'N/A' }}</p>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <h6 class="mb-1">Última atualização</h6>
+                        <p class="mb-0 text-muted">{{ goal.updated_at.strftime('%d/%m/%Y às %H:%M') if goal.updated_at else 'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Ações Rápidas -->
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Ações Rápidas</h5>
+            <div class="card detail-card">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-bolt text-primary me-2"></i>
+                        Ações Rápidas
+                    </h5>
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
                         <a href="{{ url_for('goals.index') }}" class="btn btn-outline-secondary">
-                            <i class="fas fa-arrow-left"></i> Voltar à Lista
+                            <i class="fas fa-arrow-left me-2"></i>Voltar ao Dashboard
                         </a>
                         <a href="{{ url_for('goals.edit', goal_id=goal.id) }}" class="btn btn-primary">
-                            <i class="fas fa-edit"></i> Editar Meta
+                            <i class="fas fa-edit me-2"></i>Editar Meta
                         </a>
                         <a href="{{ url_for('goals.update_progress', goal_id=goal.id) }}" class="btn btn-warning">
-                            <i class="fas fa-chart-line"></i> Atualizar Progresso
+                            <i class="fas fa-chart-line me-2"></i>Atualizar Progresso
                         </a>
                     </div>
                 </div>
@@ -158,17 +338,27 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Confirmar Exclusão</h5>
+                <h5 class="modal-title" id="deleteModalLabel">
+                    <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                    Confirmar Exclusão
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <p>Tem certeza que deseja excluir a meta <strong>"{{ goal.title }}"</strong>?</p>
-                <p class="text-danger">Esta ação não pode ser desfeita.</p>
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Atenção:</strong> Esta ação não pode ser desfeita e todos os dados da meta serão perdidos.
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </button>
                 <form action="{{ url_for('goals.delete', goal_id=goal.id) }}" method="POST" class="d-inline">
-                    <button type="submit" class="btn btn-danger">Excluir Meta</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Excluir Meta
+                    </button>
                 </form>
             </div>
         </div>

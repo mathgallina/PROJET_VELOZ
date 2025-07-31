@@ -1,122 +1,160 @@
 {% extends "base.html" %}
 
-{% block title %}Metas de Vendas{% endblock %}
+{% block title %}Dashboard de Metas - Veloz Fibra{% endblock %}
+
+{% block extra_head %}
+<style>
+    .goal-card {
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .goal-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    .stats-card {
+        background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-info) 100%);
+        color: white;
+        border: none;
+    }
+    .stats-card.success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    }
+    .stats-card.warning {
+        background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    }
+    .stats-card.danger {
+        background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+    }
+    .stats-card.info {
+        background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+    }
+    .progress-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: white;
+    }
+    .commission-rules {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-left: 4px solid var(--bs-primary);
+    }
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    .status-badge {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+    .table-responsive {
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+    .filters-section {
+        background: #f8f9fa;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
-    <div class="row">
+    <!-- Header com Título e Ações -->
+    <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3 mb-0">Metas de Vendas</h1>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 mb-1">
+                        <i class="fas fa-bullseye text-primary me-2"></i>
+                        Dashboard de Metas
+                    </h1>
+                    <p class="text-muted mb-0">Sistema de Metas e Comissões - Veloz Fibra</p>
+                </div>
                 <div class="btn-group">
                     <a href="{{ url_for('goals.create') }}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Nova Meta
+                        <i class="fas fa-plus me-2"></i>Nova Meta
                     </a>
                     <a href="{{ url_for('goals.generate_pdf_report') }}" class="btn btn-success">
-                        <i class="fas fa-file-pdf"></i> Gerar Relatório
+                        <i class="fas fa-file-pdf me-2"></i>Relatório PDF
                     </a>
+                    <button class="btn btn-outline-secondary" onclick="location.reload()">
+                        <i class="fas fa-sync-alt me-2"></i>Atualizar
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Resumo das Metas -->
+    <!-- Cards de Estatísticas -->
     <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card bg-primary text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card goal-card stats-card h-100">
+                <div class="card-body text-center">
+                    <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="card-title">Total de Metas</h6>
-                            <h3 class="mb-0">{{ summary.total_goals }}</h3>
+                            <h6 class="card-title mb-1">Total de Metas</h6>
+                            <h2 class="mb-0">{{ summary.total_goals }}</h2>
                         </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-bullseye fa-2x"></i>
+                        <div class="progress-circle bg-primary">
+                            <i class="fas fa-bullseye"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-success text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card goal-card stats-card success h-100">
+                <div class="card-body text-center">
+                    <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="card-title">Concluídas</h6>
-                            <h3 class="mb-0">{{ summary.completed_goals }}</h3>
+                            <h6 class="card-title mb-1">Concluídas</h6>
+                            <h2 class="mb-0">{{ summary.completed_goals }}</h2>
                         </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-check-circle fa-2x"></i>
+                        <div class="progress-circle bg-success">
+                            <i class="fas fa-check"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-warning text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card goal-card stats-card warning h-100">
+                <div class="card-body text-center">
+                    <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="card-title">Em Andamento</h6>
-                            <h3 class="mb-0">{{ summary.in_progress_goals }}</h3>
+                            <h6 class="card-title mb-1">Em Andamento</h6>
+                            <h2 class="mb-0">{{ summary.in_progress_goals }}</h2>
                         </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-clock fa-2x"></i>
+                        <div class="progress-circle bg-warning">
+                            <i class="fas fa-clock"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-danger text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card goal-card stats-card danger h-100">
+                <div class="card-body text-center">
+                    <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="card-title">Atrasadas</h6>
-                            <h3 class="mb-0">{{ summary.overdue_goals }}</h3>
+                            <h6 class="card-title mb-1">Atrasadas</h6>
+                            <h2 class="mb-0">{{ summary.overdue_goals }}</h2>
                         </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-exclamation-triangle fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Progresso Geral -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Progresso Geral</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <h6>Taxa de Conclusão</h6>
-                            <div class="progress mb-3">
-                                <div class="progress-bar bg-success" 
-                                     style="width: {{ summary.completion_rate }}%">
-                                    {{ summary.completion_rate }}%
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <h6>Progresso Médio</h6>
-                            <div class="progress mb-3">
-                                <div class="progress-bar bg-info" 
-                                     style="width: {{ summary.avg_progress }}%">
-                                    {{ summary.avg_progress }}%
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <h6>Faturamento Total</h6>
-                            <div class="h4 text-success mb-0">
-                                R$ {{ "%.2f"|format(summary.total_revenue|default(0)) }}
-                            </div>
-                            <small class="text-muted">Comissões acumuladas</small>
+                        <div class="progress-circle bg-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
                         </div>
                     </div>
                 </div>
@@ -124,43 +162,105 @@
         </div>
     </div>
 
-    <!-- Regras de Comissão Veloz Fibra -->
+    <!-- Progresso Geral e Faturamento -->
     <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-info">
-                <div class="card-header bg-info text-white">
+        <div class="col-lg-8 mb-3">
+            <div class="card goal-card h-100">
+                <div class="card-header bg-light">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-info-circle"></i> Regras de Comissão - Veloz Fibra
+                        <i class="fas fa-chart-line text-primary me-2"></i>
+                        Progresso Geral
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Taxa de Conclusão</h6>
+                            <div class="progress mb-3" style="height: 25px;">
+                                <div class="progress-bar bg-success" 
+                                     style="width: {{ summary.completion_rate }}%">
+                                    <strong>{{ summary.completion_rate }}%</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Progresso Médio</h6>
+                            <div class="progress mb-3" style="height: 25px;">
+                                <div class="progress-bar bg-info" 
+                                     style="width: {{ summary.avg_progress }}%">
+                                    <strong>{{ summary.avg_progress }}%</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 mb-3">
+            <div class="card goal-card stats-card info h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">
+                        <i class="fas fa-dollar-sign me-2"></i>
+                        Faturamento Total
+                    </h5>
+                    <h2 class="mb-2">R$ {{ "%.2f"|format(summary.total_revenue|default(0)) }}</h2>
+                    <p class="mb-0 text-white-50">Comissões Acumuladas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Regras de Comissão -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card goal-card commission-rules">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Regras de Comissão - Veloz Fibra
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <div class="text-center">
-                                <i class="fas fa-sync-alt fa-2x text-primary mb-2"></i>
-                                <h6>Renovação de Contrato</h6>
+                                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-sync-alt fa-lg"></i>
+                                </div>
+                                <h6 class="fw-bold">Renovações de Contrato</h6>
                                 <p class="mb-0"><strong>R$ 3,00</strong> por renovação</p>
+                                <small class="text-muted">Mínimo 100 renovações</small>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <div class="text-center">
-                                <i class="fas fa-bullseye fa-2x text-warning mb-2"></i>
-                                <h6>Meta Mínima</h6>
-                                <p class="mb-0"><strong>100 renovações</strong> para comissão</p>
+                                <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-bullseye fa-lg"></i>
+                                </div>
+                                <h6 class="fw-bold">Meta Mínima</h6>
+                                <p class="mb-0"><strong>100 renovações</strong></p>
+                                <small class="text-muted">Para comissão válida</small>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <div class="text-center">
-                                <i class="fas fa-arrow-up fa-2x text-success mb-2"></i>
-                                <h6>Upgrade de Cliente</h6>
-                                <p class="mb-0"><strong>Diferença adicional</strong> incluída</p>
+                                <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-arrow-up fa-lg"></i>
+                                </div>
+                                <h6 class="fw-bold">Upgrades de Clientes</h6>
+                                <p class="mb-0"><strong>Diferença adicional</strong></p>
+                                <small class="text-muted">Valor pago a mais</small>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <div class="text-center">
-                                <i class="fas fa-calculator fa-2x text-info mb-2"></i>
-                                <h6>Cálculo Automático</h6>
-                                <p class="mb-0"><strong>Sistema integrado</strong> de metas</p>
+                                <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-calculator fa-lg"></i>
+                                </div>
+                                <h6 class="fw-bold">Cálculo Automático</h6>
+                                <p class="mb-0"><strong>Sistema integrado</strong></p>
+                                <small class="text-muted">De metas e comissões</small>
                             </div>
                         </div>
                     </div>
@@ -168,14 +268,41 @@
             </div>
         </div>
     </div>
-                            <h6>Progresso Médio</h6>
-                            <div class="progress mb-3">
-                                <div class="progress-bar bg-info" 
-                                     style="width: {{ summary.avg_progress }}%">
-                                    {{ summary.avg_progress }}%
-                                </div>
-                            </div>
-                        </div>
+
+    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="filters-section">
+                <div class="row align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="statusFilter">
+                            <option value="">Todos os Status</option>
+                            <option value="pending">Pendente</option>
+                            <option value="in_progress">Em Andamento</option>
+                            <option value="completed">Concluída</option>
+                            <option value="cancelled">Cancelada</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Tipo</label>
+                        <select class="form-select" id="typeFilter">
+                            <option value="">Todos os Tipos</option>
+                            <option value="renewals">Renovações</option>
+                            <option value="upgrades">Upgrades</option>
+                            <option value="new_customers">Novos Clientes</option>
+                            <option value="revenue">Faturamento</option>
+                            <option value="customer_satisfaction">Satisfação</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Responsável</label>
+                        <input type="text" class="form-control" id="assignedFilter" placeholder="Filtrar por responsável">
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-primary w-100" onclick="applyFilters()">
+                            <i class="fas fa-filter me-2"></i>Aplicar Filtros
+                        </button>
                     </div>
                 </div>
             </div>
@@ -185,132 +312,140 @@
     <!-- Lista de Metas -->
     <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Todas as Metas</h5>
+            <div class="card goal-card">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        Lista de Metas
+                    </h5>
                 </div>
-                <div class="card-body">
-                    {% if goals %}
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Título</th>
-                                        <th>Tipo</th>
-                                        <th>Responsável</th>
-                                        <th>Progresso</th>
-                                        <th>Status</th>
-                                        <th>Prazo</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for goal in goals %}
-                                    <tr>
-                                        <td>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="goalsTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Tipo</th>
+                                    <th>Status</th>
+                                    <th>Responsável</th>
+                                    <th>Progresso</th>
+                                    <th>Comissão</th>
+                                    <th>Prazo</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for goal in goals %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ goal.title }}</strong>
+                                        {% if goal.description %}
+                                        <br><small class="text-muted">{{ goal.description[:50] }}{% if goal.description|length > 50 %}...{% endif %}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info status-badge">
+                                            {{ goal.goal_type.value|title }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if goal.status.value == 'completed' %}
+                                            <span class="badge bg-success status-badge">Concluída</span>
+                                        {% elif goal.status.value == 'in_progress' %}
+                                            <span class="badge bg-warning status-badge">Em Andamento</span>
+                                        {% elif goal.status.value == 'pending' %}
+                                            <span class="badge bg-secondary status-badge">Pendente</span>
+                                        {% else %}
+                                            <span class="badge bg-danger status-badge">Cancelada</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ goal.assigned_to }}</td>
+                                    <td>
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar bg-success" 
+                                                 style="width: {{ goal.progress_percentage }}%">
+                                                {{ "%.1f"|format(goal.progress_percentage) }}%
+                                            </div>
+                                        </div>
+                                        <small class="text-muted">{{ goal.current_value }} / {{ goal.target_value }}</small>
+                                    </td>
+                                    <td>
+                                        <strong class="text-success">R$ {{ "%.2f"|format(goal.commission_value) }}</strong>
+                                    </td>
+                                    <td>
+                                        {% if goal.end_date %}
+                                            <div>{{ goal.end_date.strftime('%d/%m/%Y') }}</div>
+                                            {% if goal.is_overdue %}
+                                                <small class="text-danger">Atrasada</small>
+                                            {% elif goal.days_remaining > 0 %}
+                                                <small class="text-info">{{ goal.days_remaining }} dias</small>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-muted">Não definido</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
                                             <a href="{{ url_for('goals.show', goal_id=goal.id) }}" 
-                                               class="text-decoration-none">
-                                                {{ goal.title }}
+                                               class="btn btn-sm btn-outline-primary" 
+                                               title="Visualizar">
+                                                <i class="fas fa-eye"></i>
                                             </a>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-secondary">
-                                                {{ goal.goal_type.value.replace('_', ' ').title() }}
-                                            </span>
-                                        </td>
-                                        <td>{{ goal.assigned_to }}</td>
-                                        <td>
-                                            <div class="progress" style="height: 20px;">
-                                                <div class="progress-bar 
-                                                         {% if goal.progress_percentage >= 100 %}bg-success
-                                                         {% elif goal.progress_percentage >= 50 %}bg-warning
-                                                         {% else %}bg-info{% endif %}" 
-                                                     style="width: {{ goal.progress_percentage }}%">
-                                                    {{ goal.current_value }}/{{ goal.target_value }}
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            {% if goal.status.value == 'completed' %}
-                                                <span class="badge bg-success">Concluída</span>
-                                            {% elif goal.status.value == 'in_progress' %}
-                                                <span class="badge bg-warning">Em Andamento</span>
-                                            {% elif goal.status.value == 'cancelled' %}
-                                                <span class="badge bg-danger">Cancelada</span>
-                                            {% else %}
-                                                <span class="badge bg-secondary">Pendente</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            {% if goal.end_date %}
-                                                <span class="{% if goal.is_overdue %}text-danger{% endif %}">
-                                                    {{ goal.end_date.strftime('%d/%m/%Y') }}
-                                                    {% if goal.is_overdue %}
-                                                        <i class="fas fa-exclamation-triangle text-danger"></i>
-                                                    {% endif %}
-                                                </span>
-                                            {% else %}
-                                                <span class="text-muted">Não definido</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            <div class="btn-group" role="group">
-                                                <a href="{{ url_for('goals.show', goal_id=goal.id) }}" 
-                                                   class="btn btn-sm btn-outline-primary">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                                <a href="{{ url_for('goals.edit', goal_id=goal.id) }}" 
-                                                   class="btn btn-sm btn-outline-warning">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a href="{{ url_for('goals.update_progress', goal_id=goal.id) }}" 
-                                                   class="btn btn-sm btn-outline-info">
-                                                    <i class="fas fa-chart-line"></i>
-                                                </a>
-                                                <button type="button" 
-                                                        class="btn btn-sm btn-outline-danger"
-                                                        onclick="deleteGoal({{ goal.id }})">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    {% else %}
-                        <div class="text-center py-4">
-                            <i class="fas fa-bullseye fa-3x text-muted mb-3"></i>
-                            <h5 class="text-muted">Nenhuma meta encontrada</h5>
-                            <p class="text-muted">Crie sua primeira meta para começar!</p>
-                            <a href="{{ url_for('goals.create') }}" class="btn btn-primary">
-                                <i class="fas fa-plus"></i> Criar Meta
-                            </a>
-                        </div>
-                    {% endif %}
+                                            <a href="{{ url_for('goals.edit', goal_id=goal.id) }}" 
+                                               class="btn btn-sm btn-outline-warning" 
+                                               title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{{ url_for('goals.update_progress', goal_id=goal.id) }}" 
+                                               class="btn btn-sm btn-outline-info" 
+                                               title="Progresso">
+                                                <i class="fas fa-chart-line"></i>
+                                            </a>
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-outline-danger" 
+                                                    onclick="deleteGoal({{ goal.id }}, '{{ goal.title }}')"
+                                                    title="Excluir">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal de Confirmação -->
+<!-- Modal de Confirmação de Exclusão -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Confirmar Exclusão</h5>
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                    Confirmar Exclusão
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p>Tem certeza que deseja excluir esta meta?</p>
-                <p class="text-danger"><small>Esta ação não pode ser desfeita.</small></p>
+                <p>Tem certeza que deseja excluir a meta <strong id="goalTitle"></strong>?</p>
+                <p class="text-danger">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Esta ação não pode ser desfeita.
+                </p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </button>
                 <form id="deleteForm" method="POST" style="display: inline;">
-                    <button type="submit" class="btn btn-danger">Excluir</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Excluir Meta
+                    </button>
                 </form>
             </div>
         </div>
@@ -318,13 +453,50 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
+{% block extra_scripts %}
 <script>
-function deleteGoal(goalId) {
-    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
-    const form = document.getElementById('deleteForm');
-    form.action = `/goals/${goalId}/delete`;
-    modal.show();
+function deleteGoal(goalId, goalTitle) {
+    document.getElementById('goalTitle').textContent = goalTitle;
+    document.getElementById('deleteForm').action = `/admin/goals/${goalId}/delete`;
+    
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    deleteModal.show();
 }
+
+function applyFilters() {
+    const statusFilter = document.getElementById('statusFilter').value;
+    const typeFilter = document.getElementById('typeFilter').value;
+    const assignedFilter = document.getElementById('assignedFilter').value.toLowerCase();
+    
+    const rows = document.querySelectorAll('#goalsTable tbody tr');
+    
+    rows.forEach(row => {
+        let show = true;
+        
+        // Filtro por status
+        if (statusFilter && !row.querySelector('td:nth-child(3) .badge').textContent.toLowerCase().includes(statusFilter)) {
+            show = false;
+        }
+        
+        // Filtro por tipo
+        if (typeFilter && !row.querySelector('td:nth-child(2) .badge').textContent.toLowerCase().includes(typeFilter)) {
+            show = false;
+        }
+        
+        // Filtro por responsável
+        if (assignedFilter && !row.querySelector('td:nth-child(4)').textContent.toLowerCase().includes(assignedFilter)) {
+            show = false;
+        }
+        
+        row.style.display = show ? '' : 'none';
+    });
+}
+
+// Aplicar filtros ao pressionar Enter
+document.getElementById('assignedFilter').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        applyFilters();
+    }
+});
 </script>
 {% endblock %} 

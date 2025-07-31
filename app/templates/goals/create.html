@@ -1,15 +1,65 @@
 {% extends "base.html" %}
 
-{% block title %}Nova Meta{% endblock %}
+{% block title %}Criar Nova Meta - Veloz Fibra{% endblock %}
+
+{% block extra_head %}
+<style>
+    .form-card {
+        border: none;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-radius: 0.5rem;
+    }
+    .form-card .card-header {
+        background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-info) 100%);
+        color: white;
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+    .form-section {
+        background: #f8f9fa;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .form-section h6 {
+        color: var(--bs-primary);
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    .commission-info {
+        background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+        border-left: 4px solid var(--bs-primary);
+        border-radius: 0.5rem;
+        padding: 1rem;
+    }
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: var(--bs-primary);
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+    .btn-action {
+        min-width: 120px;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
-    <div class="row">
+    <!-- Header -->
+    <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3 mb-0">Nova Meta</h1>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 mb-1">
+                        <i class="fas fa-plus-circle text-primary me-2"></i>
+                        Criar Nova Meta
+                    </h1>
+                    <p class="text-muted mb-0">Sistema de Metas e Comissões - Veloz Fibra</p>
+                </div>
                 <a href="{{ url_for('goals.index') }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left"></i> Voltar
+                    <i class="fas fa-arrow-left me-2"></i>Voltar ao Dashboard
                 </a>
             </div>
         </div>
@@ -17,148 +67,182 @@
 
     <div class="row">
         <div class="col-lg-8">
-            <div class="card">
+            <!-- Formulário Principal -->
+            <div class="card form-card">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">Informações da Meta</h5>
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-edit me-2"></i>
+                        Informações da Meta
+                    </h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST">
+                    <form method="POST" id="goalForm">
                         {{ form.hidden_tag() }}
                         
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="mb-3">
-                                    {{ form.title.label(class="form-label") }}
-                                    {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}
-                                    {% if form.title.errors %}
-                                        <div class="invalid-feedback">
-                                            {% for error in form.title.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
+                        <!-- Informações Básicas -->
+                        <div class="form-section">
+                            <h6>
+                                <i class="fas fa-info-circle me-2"></i>
+                                Informações Básicas
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        {{ form.title.label(class="form-label") }}
+                                        {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else ""), 
+                                                    placeholder="Ex: Meta de Renovações - Janeiro 2024") }}
+                                        {% if form.title.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.title.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text">Nome descritivo da meta</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        {{ form.assigned_to.label(class="form-label") }}
+                                        {{ form.assigned_to(class="form-control" + (" is-invalid" if form.assigned_to.errors else ""), 
+                                                        placeholder="Nome do responsável") }}
+                                        {% if form.assigned_to.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.assigned_to.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    {{ form.goal_type.label(class="form-label") }}
-                                    {{ form.goal_type(class="form-select" + (" is-invalid" if form.goal_type.errors else "")) }}
-                                    {% if form.goal_type.errors %}
-                                        <div class="invalid-feedback">
-                                            {% for error in form.goal_type.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
+                            
+                            <div class="mb-3">
+                                {{ form.description.label(class="form-label") }}
+                                {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), 
+                                                rows=3, placeholder="Descreva os objetivos e detalhes da meta...") }}
+                                {% if form.description.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.description.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Descrição detalhada da meta e objetivos</div>
+                            </div>
+                        </div>
+
+                        <!-- Valores e Progresso -->
+                        <div class="form-section">
+                            <h6>
+                                <i class="fas fa-chart-line me-2"></i>
+                                Valores e Progresso
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        {{ form.target_value.label(class="form-label") }}
+                                        {{ form.target_value(class="form-control" + (" is-invalid" if form.target_value.errors else ""), 
+                                                        type="number", step="0.01", placeholder="0.00") }}
+                                        {% if form.target_value.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.target_value.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text">Valor alvo a ser atingido</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        {{ form.current_value.label(class="form-label") }}
+                                        {{ form.current_value(class="form-control" + (" is-invalid" if form.current_value.errors else ""), 
+                                                        type="number", step="0.01", placeholder="0.00") }}
+                                        {% if form.current_value.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.current_value.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text">Valor atual (pode ser 0)</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        {{ form.goal_type.label(class="form-label") }}
+                                        {{ form.goal_type(class="form-select" + (" is-invalid" if form.goal_type.errors else "")) }}
+                                        {% if form.goal_type.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.goal_type.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            {{ form.description.label(class="form-label") }}
-                            {{ form.description(class="form-control", rows="3" + (" is-invalid" if form.description.errors else "")) }}
-                            {% if form.description.errors %}
-                                <div class="invalid-feedback">
-                                    {% for error in form.description.errors %}
-                                        {{ error }}
-                                    {% endfor %}
+                        <!-- Status e Datas -->
+                        <div class="form-section">
+                            <h6>
+                                <i class="fas fa-calendar-alt me-2"></i>
+                                Status e Período
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        {{ form.status.label(class="form-label") }}
+                                        {{ form.status(class="form-select" + (" is-invalid" if form.status.errors else "")) }}
+                                        {% if form.status.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.status.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
                                 </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.target_value.label(class="form-label") }}
-                                    {{ form.target_value(class="form-control" + (" is-invalid" if form.target_value.errors else "")) }}
-                                    {% if form.target_value.errors %}
-                                        <div class="invalid-feedback">
-                                            {% for error in form.target_value.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        {{ form.start_date.label(class="form-label") }}
+                                        {{ form.start_date(class="form-control" + (" is-invalid" if form.start_date.errors else ""), 
+                                                        type="date") }}
+                                        {% if form.start_date.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.start_date.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.current_value.label(class="form-label") }}
-                                    {{ form.current_value(class="form-control" + (" is-invalid" if form.current_value.errors else "")) }}
-                                    {% if form.current_value.errors %}
-                                        <div class="invalid-feedback">
-                                            {% for error in form.current_value.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.assigned_to.label(class="form-label") }}
-                                    {{ form.assigned_to(class="form-control" + (" is-invalid" if form.assigned_to.errors else "")) }}
-                                    {% if form.assigned_to.errors %}
-                                        <div class="invalid-feedback">
-                                            {% for error in form.assigned_to.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.status.label(class="form-label") }}
-                                    {{ form.status(class="form-select" + (" is-invalid" if form.status.errors else "")) }}
-                                    {% if form.status.errors %}
-                                        <div class="invalid-feedback">
-                                            {% for error in form.status.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        {{ form.end_date.label(class="form-label") }}
+                                        {{ form.end_date(class="form-control" + (" is-invalid" if form.end_date.errors else ""), 
+                                                      type="date") }}
+                                        {% if form.end_date.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.end_date.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.start_date.label(class="form-label") }}
-                                    {{ form.start_date(class="form-control", type="date" + (" is-invalid" if form.start_date.errors else "")) }}
-                                    {% if form.start_date.errors %}
-                                        <div class="invalid-feedback">
-                                            {% for error in form.start_date.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.end_date.label(class="form-label") }}
-                                    {{ form.end_date(class="form-control", type="date" + (" is-invalid" if form.end_date.errors else "")) }}
-                                    {% if form.end_date.errors %}
-                                        <div class="invalid-feedback">
-                                            {% for error in form.end_date.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-end gap-2">
-                            <a href="{{ url_for('goals.index') }}" class="btn btn-secondary">
-                                Cancelar
+                        <!-- Botões de Ação -->
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{{ url_for('goals.index') }}" class="btn btn-outline-secondary btn-action">
+                                <i class="fas fa-times me-2"></i>Cancelar
                             </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Criar Meta
+                            <button type="submit" class="btn btn-primary btn-action">
+                                <i class="fas fa-save me-2"></i>Criar Meta
                             </button>
                         </div>
                     </form>
@@ -167,27 +251,79 @@
         </div>
 
         <div class="col-lg-4">
-            <div class="card">
+            <!-- Informações de Comissão -->
+            <div class="card form-card mb-4">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">Dicas</h5>
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-dollar-sign me-2"></i>
+                        Regras de Comissão
+                    </h5>
                 </div>
                 <div class="card-body">
-                    <div class="mb-3">
-                        <h6><i class="fas fa-lightbulb text-warning"></i> Título</h6>
-                        <p class="text-muted small">Use um título claro e específico que descreva a meta.</p>
+                    <div class="commission-info">
+                        <h6 class="fw-bold mb-3">Veloz Fibra - Cálculo de Comissões</h6>
+                        
+                        <div class="mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-sync-alt text-primary me-2"></i>
+                                <strong>Renovações de Contrato</strong>
+                            </div>
+                            <p class="mb-1">R$ 3,00 por renovação</p>
+                            <small class="text-muted">Mínimo 100 renovações para comissão</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-arrow-up text-success me-2"></i>
+                                <strong>Upgrades de Clientes</strong>
+                            </div>
+                            <p class="mb-1">Diferença adicional paga</p>
+                            <small class="text-muted">Valor pago a mais pelo cliente</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-chart-bar text-info me-2"></i>
+                                <strong>Faturamento Total</strong>
+                            </div>
+                            <p class="mb-1">5% do faturamento</p>
+                            <small class="text-muted">Comissão baseada no faturamento</small>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <h6><i class="fas fa-chart-line text-info"></i> Valores</h6>
-                        <p class="text-muted small">Defina valores realistas e mensuráveis para acompanhar o progresso.</p>
-                    </div>
-                    <div class="mb-3">
-                        <h6><i class="fas fa-calendar text-success"></i> Prazos</h6>
-                        <p class="text-muted small">Estabeleça datas de início e fim para manter o foco.</p>
-                    </div>
-                    <div class="mb-3">
-                        <h6><i class="fas fa-user text-primary"></i> Responsável</h6>
-                        <p class="text-muted small">Atribua a meta a uma pessoa específica para garantir responsabilidade.</p>
-                    </div>
+                </div>
+            </div>
+
+            <!-- Dicas de Criação -->
+            <div class="card form-card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Dicas para Criar Metas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>Título claro:</strong> Descreva o objetivo da meta
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>Valor realista:</strong> Defina metas atingíveis
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>Prazo adequado:</strong> Estabeleça datas realistas
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>Responsável:</strong> Atribua a pessoa correta
+                        </li>
+                        <li class="mb-0">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>Descrição detalhada:</strong> Explique os objetivos
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -195,7 +331,7 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
+{% block extra_scripts %}
 <script>
 // Validação de datas
 document.addEventListener('DOMContentLoaded', function() {
@@ -210,6 +346,45 @@ document.addEventListener('DOMContentLoaded', function() {
         endDate.addEventListener('change', function() {
             startDate.max = this.value;
         });
+    }
+    
+    // Validação de valores
+    const targetValue = document.getElementById('target_value');
+    const currentValue = document.getElementById('current_value');
+    
+    if (targetValue && currentValue) {
+        targetValue.addEventListener('input', function() {
+            if (parseFloat(this.value) < 0) {
+                this.value = 0;
+            }
+        });
+        
+        currentValue.addEventListener('input', function() {
+            if (parseFloat(this.value) < 0) {
+                this.value = 0;
+            }
+        });
+    }
+});
+
+// Preview de comissão baseado no tipo
+document.getElementById('goal_type').addEventListener('change', function() {
+    const goalType = this.value;
+    const targetValue = document.getElementById('target_value').value;
+    
+    if (targetValue && goalType) {
+        let commission = 0;
+        
+        if (goalType === 'renewals' && targetValue >= 100) {
+            commission = targetValue * 3.0;
+        } else if (goalType === 'upgrades') {
+            commission = targetValue;
+        } else if (goalType === 'revenue') {
+            commission = targetValue * 0.05;
+        }
+        
+        // Aqui você pode adicionar uma exibição da comissão estimada
+        console.log(`Comissão estimada: R$ ${commission.toFixed(2)}`);
     }
 });
 </script>
